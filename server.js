@@ -1,3 +1,5 @@
+require('dotenv').config();  // Ensure this is at the top of your file
+
 const { createClient } = require('@supabase/supabase-js');
 const express = require('express');
 const path = require('path');
@@ -12,9 +14,10 @@ const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY; 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+// Middleware
 app.use(express.static(path.join(__dirname, 'wishlist')));
-app.use(express.json());  
-app.use(cors());
+app.use(express.json());  // Parse incoming JSON requests
+app.use(cors());  // Enable CORS
 
 // Route to serve landing page
 app.get('/', (req, res) => {
@@ -51,7 +54,7 @@ app.post('/addItem', async (req, res) => {
       return res.status(404).json({ success: false, message: 'Item not found for update.' });
     }
 
-    const { updateError } = await supabase
+    const { error: updateError } = await supabase
       .from('wishlist_items')
       .update({ name, link, price: priceNum, image, notes, priority })
       .eq('id', updateIndex)
@@ -157,6 +160,7 @@ app.get('/getBoughtItems/:wishlistNumber', async (req, res) => {
   res.json({ success: true, items: data });
 });
 
+// Start server
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
