@@ -1,4 +1,4 @@
-require('dotenv').config();  // Ensure this is at the top of your file
+require('dotenv').config();
 
 const { createClient } = require('@supabase/supabase-js');
 const express = require('express');
@@ -9,31 +9,25 @@ const cors = require('cors');
 const app = express();
 const port = 3000;
 
-// Initialize Supabase client with environment variables
 const supabaseUrl = process.env.SUPABASE_URL; 
 const supabaseKey = process.env.SUPABASE_KEY; 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// Middleware
 app.use(express.static(path.join(__dirname, 'wishlist')));
-app.use(express.json());  // Parse incoming JSON requests
-app.use(cors());  // Enable CORS
+app.use(express.json());
+app.use(cors());
 
-// Route to serve landing page
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'wishlist', 'homepage.html')); // Landing page
+  res.sendFile(path.join(__dirname, 'wishlist', 'homepage.html'));
 });
 
-// Route to serve wishlist page
 app.get('/wish.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'wishlist', 'wish.html')); // Wishlist page
+  res.sendFile(path.join(__dirname, 'wishlist', 'wish.html'));
 });
 
-// Route to add or update wishlist items
 app.post('/addItem', async (req, res) => {
   const { name, link, price, image, notes, priority, wishlistNumber, updateIndex } = req.body;
 
-  // Validate required fields
   if (!name || !link || !price || !wishlistNumber) {
     return res.status(400).json({ success: false, message: "Missing required fields." });
   }
@@ -43,7 +37,7 @@ app.post('/addItem', async (req, res) => {
     return res.status(400).json({ success: false, message: "Invalid price." });
   }
 
-  if (updateIndex !== null && updateIndex !== undefined) { // Update existing item
+  if (updateIndex !== null && updateIndex !== undefined) {
     const { data, error } = await supabase
       .from('wishlist_items')
       .select('id')
@@ -66,7 +60,7 @@ app.post('/addItem', async (req, res) => {
     }
 
     return res.json({ success: true, message: 'Item updated successfully.' });
-  } else { // Add new item
+  } else {
     const { data, error } = await supabase
       .from('wishlist_items')
       .insert([{ name, link, price: priceNum, image, notes, priority, wishlistNumber }]);
@@ -80,7 +74,6 @@ app.post('/addItem', async (req, res) => {
   }
 });
 
-// Route to get wishlist items
 app.get('/getWishlistItems/:wishlistNumber', async (req, res) => {
   const wishlistNumber = req.params.wishlistNumber;
 
@@ -98,7 +91,6 @@ app.get('/getWishlistItems/:wishlistNumber', async (req, res) => {
   res.json({ success: true, items: data });
 });
 
-// Route to delete an item
 app.post('/deleteItem', async (req, res) => {
   const { wishlistNumber, id } = req.body;
 
@@ -120,7 +112,6 @@ app.post('/deleteItem', async (req, res) => {
   res.json({ success: true, message: 'Item deleted successfully' });
 });
 
-// Route to mark item as bought
 app.post('/markAsBought', async (req, res) => {
   const { wishlistNumber, id } = req.body;
 
@@ -142,7 +133,6 @@ app.post('/markAsBought', async (req, res) => {
   res.json({ success: true, message: 'Item marked as bought successfully.' });
 });
 
-// Route to get bought items
 app.get('/getBoughtItems/:wishlistNumber', async (req, res) => {
   const wishlistNumber = req.params.wishlistNumber;
 
@@ -160,7 +150,6 @@ app.get('/getBoughtItems/:wishlistNumber', async (req, res) => {
   res.json({ success: true, items: data });
 });
 
-// Start server
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });

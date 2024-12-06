@@ -330,18 +330,14 @@ okBtn.addEventListener('mouseleave', () => {
     okBtn.textContent = 'OK';
 });
 
-
-// Wait for the page to load
 window.addEventListener('load', function() {
     const loader = document.getElementById('loader');
 
-    // Add fade-out class after a slight delay to trigger fade-out effect
     setTimeout(function() {
         loader.classList.add('fade-out');
         
-        // Remove the loader element completely after fading out
         loader.addEventListener('transitionend', function() {
             loader.style.display = 'none';
         });
-    }, 500); // Adjust the delay time to control when the fade-out happens
+    }, 500); 
 });
