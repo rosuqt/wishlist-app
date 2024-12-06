@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wishlist Website</title>
+    <link rel="stylesheet" href="/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <a href="homepage.html" class="header-link">
+            <h1>Wishlist</h1>
+        </a>
+        <nav>
+            <!-- Link to homepage -->
+            <button onmouseover="changeText(this, '🏠︎')" onmouseout="resetText(this, 'Home')" onclick="window.location.href='homepage.html'">Home</button>
+            <!-- Link to Wishlist 1 (with passing wishlist=1) -->
+            <button onmouseover="changeText(this, 'Ally\'s Wishlist')" onmouseout="resetText(this, 'Wishlist 1')" onclick="window.location.href='wish.html?wishlist=1'">Wishlist 1</button>
+            <!-- Link to Wishlist 2 (with passing wishlist=2) -->
+            <button onmouseover="changeText(this, 'Rei\'s Wishlist')" onmouseout="resetText(this, 'Wishlist 2')" onclick="window.location.href='wish.html?wishlist=2'">Wishlist 2</button>
+        </nav>
+    </header>
+
+    <main id="wishlistContainer">
+        
+        <!-- Wishlist data will be populated here -->
+    </main>
+
+    <div id="addItemForm">
+        <h2 class="no-animation">Add / Update Item</h2>
+        <form onsubmit="addOrUpdateItem(event)">
+            <label>Product Name: <input type="text" id="productName" required></label>
+            <label>Product Link: <input type="url" id="productLink" required></label>
+            <label>Product Price: <input type="number" id="productPrice" required></label>
+            <label>Product Image URL: <input type="url" id="productImage" required></label>
+            <label>Notes: <textarea id="productNotes"></textarea></label>
+            <label>Priority: 
+                <select id="productPriority">
+                    <option value="">None</option>
+                    <option value="Most Want">Most Want</option>
+                </select>
+            </label>
+            <input type="hidden" id="wishlistNumber" value="1">
+            <input type="hidden" id="updateIndex" value="">
+            <button type="submit">Save</button>
+            <button type="button" onclick="closeAddItemForm()">Cancel</button>
+        </form>
+        
+    </div>
+
+    <div id="responseBox" style="display: none;">
+        <div id="responseHeader">
+          <span id="status"></span>
+          <button id="closeBtn">X</button>
+        </div>
+        <div id="messageContainer">
+          <div id="message"></div>
+          <div id="timer">Closing in <span id="countdown">5</span> seconds...</div>
+        </div>
+        <button id="okBtn">OK</button>
+      </div>
+      
+      <div id="loader" class="loader">
+        <div class="icon">
+          <svg class="heart-main" viewBox="0 0 512 512" width="100" title="heart">
+            <path d="M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z" />
+          </svg>
+          <svg class="heart-background" viewBox="0 0 512 512" width="100" title="heart">
+            <path d="M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z" />
+          </svg>
+        </div>
+      </div>
+
+    
+    
+
+    <script src="script.js"></script>
+</body>
+</html>

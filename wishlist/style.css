@@ -1,0 +1,602 @@
+    body {
+        font-family: 'Poppins', sans-serif;
+        margin: 0;
+        padding: 0;
+        background: #f5d5d5;
+        color: #63283bc8;
+    }
+
+    header {
+        text-align: center;
+        background-color: #ffffff;
+        color: rgb(73, 63, 63);
+        position: relative;
+        z-index: 1;
+    }
+
+    @keyframes fadeIn {
+        0% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+
+    header * {
+        animation: fadeIn 1.2s ease-out;
+    }
+
+    header h1 {
+        font-size: 2.5em;
+        margin: 0;
+    }
+
+    nav {
+        margin-top: 10px;
+        background-color: #ffffff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        padding: 10px 0;
+        border-radius: 0;
+        display: flex;
+        justify-content: center;
+    }
+
+    nav button {
+        position: relative;
+        padding: 15px 100px;
+        margin: 1px;
+        border: none;
+        background-color: #ffffff;
+        color: #793249b7;
+        font-size: 1rem;
+        cursor: pointer;
+        overflow: hidden;
+        text-align: center;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        transition: color 0.3s, background-color 0.3s, transform 0.3s, opacity 0.3s ease;
+    }
+
+    nav button::after {
+        content: '──── ‪‪❤︎‬ ────';
+        position: absolute;
+        top: 65%;
+        left: 50%;
+        font-size: 15px;
+        color: #e29fb2;
+        transform: translateX(-50%);
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    nav button:hover {
+        color: rgb(198, 131, 131);
+        background-color: transparent;
+        transform: scale(1.1);
+    }
+
+    nav button:hover::after {
+        opacity: 1;
+    }
+
+    @keyframes slideInFromLeft {
+        0% {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+        100% {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    #wishlistContainer {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        opacity: 1;
+    }
+
+    .wishlistItem {
+        display: flex;
+        flex-direction: row;
+        gap: 20px;
+        background: #ffffff;
+        padding: 15px;
+        margin: 10px 0;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        opacity: 0;
+        transform: translateX(-100%);
+        animation: slideInFromLeft 1s ease-out forwards;
+    }
+
+    .wishlistItem:nth-child(odd) {
+        animation-delay: 2s;
+    }
+
+    .wishlistItem:nth-child(even) {
+        animation-delay: 1.5s;
+    }
+
+    .wishlistItem img {
+        width: 200px;
+        height: 200px;
+        border-radius: 10px;
+        margin-right: 15px;
+    }
+
+    .wishlistItem div {
+        flex: 1;
+    }
+
+    .wishlistItem .action-buttons {
+        display: flex !important;
+        gap: 10px !important;
+        justify-content: flex-start !important;
+        align-items: center;
+    }
+
+    @keyframes bounceIn {
+        0% {
+            transform: translateY(30px);
+            opacity: 0;
+        }
+        50% {
+            transform: translateY(-10px);
+        }
+        100% {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+    
+    .action-buttons button {
+        padding: 8px 15px;
+        background-color: #cc9999;
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        opacity: 0;
+        animation: bounceIn 2s ease-in-out forwards; /* Reduced duration to 0.5s */
+    }
+    
+    .action-buttons button:nth-child(1) {
+        animation-delay: 0.8s;
+    }
+    
+    .action-buttons button:nth-child(2) {
+        animation-delay: 1s;
+    }
+    
+    .action-buttons button:nth-child(3) {
+        animation-delay: 1.2s;
+    }
+    
+    .action-buttons button:nth-child(4) {
+        animation-delay: 1.4s;
+    }
+    
+
+    .action-buttons button:hover {
+        background-color: #996666;
+    }
+
+    #wishlistContainer button {
+        display: block;
+        margin: 10px auto;
+        padding: 15px 20px;
+        font-size: 16px;
+        font-weight: normal;
+        color: #ffffff;
+        background: #e29fb2;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        box-shadow: 0 2px 0 rgba(214, 172, 181, 0.863), 0 4px 6px rgba(182, 135, 145, 0.863);
+        transition: transform 0.3s, box-shadow 0.3s;
+        letter-spacing: 0.05em;
+    }
+
+    #wishlistContainer button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 12px rgba(182, 135, 145, 0.863);
+    }
+
+    /* Keyframe for sliding the form from the bottom */
+    @keyframes slideInFromBottom {
+        from {
+            transform: translate(-50%, 100%); /* Start from the bottom */
+            opacity: 0; /* Start invisible */
+        }
+        to {
+            transform: translate(-50%, -50%); /* End at the center */
+            opacity: 1; /* Fully visible */
+        }
+    }
+
+    /* Apply the animation to the #addItemForm when it is shown */
+    #addItemForm {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%); /* Centered by default */
+        background-color: #ffffff;
+        padding: 20px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        display: none;
+        width: 300px;
+        opacity: 0; /* Start invisible */
+        animation: slideInFromBottom 0.5s ease-out forwards; /* Slide-in animation */
+    }
+
+    /* Other styling for the form */
+    #addItemForm h2 {
+        text-align: center;
+        margin-bottom: 15px;
+    }
+
+    #addItemForm form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    #addItemForm form label {
+        margin-bottom: 10px;
+        font-size: 0.9em;
+    }
+
+    #addItemForm form input,
+    #addItemForm form textarea,
+    #addItemForm form select {
+        margin-top: 5px;
+        padding: 8px;
+        font-size: 1em;
+        border: 1px solid #cc9999;
+        background-color: #fdfdfd;
+    }
+
+    #addItemForm form button {
+        margin-top: 10px;
+        padding: 10px;
+        font-size: 1em;
+        background-color: #e29fb2;
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    #addItemForm form button:hover {
+        background-color: #e48aa4;
+    }
+
+
+    .already-bought-link {
+        padding: 0% 30px;
+        color: #c47d90;
+        text-decoration: none;
+        cursor: pointer;
+        font-size: 15px;
+        margin-left: 10px;
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        transition: color 0.3s ease-in-out;
+        font-style: italic;
+    }
+
+    .already-bought-link::after {
+        content: '───── ‪‪❤︎‬ ─────';
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        font-size: 11px;
+        color: #e29fb2;
+        transform: translateX(-50%);
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    .already-bought-link:hover {
+        color: #e29fb2;
+    }
+
+    .already-bought-link:hover::after {
+        opacity: 1;
+    }
+
+    .header-link {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    a {
+        color: #ff69b4;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .loading-image {
+        width: 20%; 
+        height: auto;
+        display: block;
+        margin: 0 auto; 
+    }
+
+    .loading-text {
+        text-align: center; 
+        font-size: 1.1em; 
+        color: #793249b7; 
+        margin-top: 10px; 
+    }
+
+    @keyframes slideInFromLeft {
+        0% {
+            transform: translateX(-100%); /* Start off-screen to the left */
+            opacity: 0; /* Start as invisible */
+        }
+        100% {
+            transform: translateX(0); /* Slide to its original position */
+            opacity: 1; /* Become fully visible */
+        }
+    }
+
+    h2 {
+        animation: slideInFromLeft 1s ease-out forwards; /* Apply the animation */
+    }
+
+
+    h2.no-animation {
+        animation: none; 
+    }
+
+
+    @keyframes slideIn {
+        from {
+            transform: translateX(-100%); 
+            opacity: 0; 
+        }
+        to {
+            transform: translateX(0); 
+            opacity: 1; 
+        }
+    }
+
+    .wishlistItem span {
+        display: inline-block; 
+        opacity: 0; 
+        animation: slideIn 1.2s ease-out forwards; 
+    }
+
+    .wishlistItem span {
+        animation-delay: 0.5s; 
+    }
+
+    #responseBox {
+        display: none;  /* Hidden by default */
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 350px;
+        height: 200px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        font-family: Arial, sans-serif;
+        z-index: 9999;
+        text-align: center;
+    }
+    
+    #responseHeader {
+        background-color: #cc9999;  /* Green for success */
+        color: white;
+        padding: 10px;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    #errorHeader {
+        background-color: #dc3545;  /* Red for error */
+    }
+    
+    #closeBtn {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+    }
+    
+    #closeBtn:hover {
+        opacity: 0.8;
+    }
+    
+    #messageContainer {
+        padding: 15px;
+        font-size: 16px;
+    }
+    
+    #timer {
+        font-size: 14px;
+        margin-top: 10px;
+        color: #555;
+    }
+    
+    #okBtn {
+        margin-top: 15px;
+        padding: 8px 20px;
+        background-color: #e99db5;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    
+    #okBtn:hover {
+        background-color: #db7d9b;
+    }
+
+    .most-wanted-link {
+        color: #007bff;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .most-wanted-link:hover {
+        text-decoration: underline;
+    }
+    /* Fullscreen white overlay */
+    .loader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: white;
+        z-index: 9999;
+        opacity: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        animation: pulse-out 3s infinite, fade-out 2.2s forwards; /* Apply pulse and fade-out animations */
+    }
+    
+    /* Pulse effect before fade out */
+    @keyframes pulse-out {
+        0% {
+        opacity: 1;
+        transform: scale(1);
+        }
+        50% {
+        opacity: 0.8;
+        transform: scale(1.05); /* Slightly scale up */
+        }
+        100% {
+        opacity: 1;
+        transform: scale(1);
+        }
+    }
+    
+    /* Faster fade-out effect */
+    @keyframes fade-out {
+        10% {
+        opacity: 1;
+        }
+        80% {
+        opacity: 1;
+        }
+        100% {
+        opacity: 0;
+        }
+    }
+    
+    /* Optional: Add a fade-out effect after some time */
+    .loader.fade-out {
+        opacity: 0;
+        pointer-events: none; /* Optional: Disable interaction after fade out */
+    }
+    
+    /* Basic styling for the heart animation */
+    :root {
+        --pink-light: #ff7eb4;
+        --pink: #ff2581;
+    }
+    
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+    
+    /* Centering the icon inside the container */
+    .icon {
+        fill: transparent;
+        stroke: var(--pink);
+        stroke-width: 20;
+        cursor: pointer;
+        position: relative;
+    }
+    
+    .icon svg {
+        overflow: visible;
+        width: 10rem;
+    }
+    
+    .icon path {
+        stroke-dashoffset: 0;
+        stroke-dasharray: 1550;
+        transform-origin: center;
+    }
+    
+    .icon .heart-background {
+        position: absolute;
+        left: 0;
+        right: 0;
+        z-index: -1;
+        stroke: none;
+    }
+    
+    /* Animation for the heart background and main heart */
+    @keyframes stroke-animation {
+        0% {
+        stroke-dashoffset: 0;
+        }
+        30% {
+        stroke-dashoffset: 1550;
+        }
+        60% {
+        stroke-dashoffset: 3100;
+        fill: transparent;
+        transform: scale(1);
+        }
+        80% {
+        fill: var(--pink);
+        transform: scale(1.1);
+        }
+        90% {
+        transform: scale(1);
+        }
+        100% {
+        stroke-dashoffset: 3100;
+        fill: var(--pink);
+        }
+    }
+    
+    /* Faster fade-out effect on the heart animation */
+    @keyframes fade-animation {
+        70% {
+        fill: transparent;
+        transform: scale(1);
+        }
+        80% {
+        fill: var(--pink-light);
+        transform: scale(1.1);
+        opacity: 1;
+        }
+        90% {
+        opacity: 1;
+        }
+        100% {
+        transform: scale(2.5);
+        opacity: 0;
+        }
+    }
+    
+    /* Add the fade-out effect */
+    .loader.fade-out .icon .heart-main path {
+        animation: stroke-animation 1.3s ease-in-out forwards;
+    }
+    
+    .loader.fade-out .icon .heart-background path {
+        animation: fade-animation 1.3s ease-in-out forwards;
+    }
+    
+
