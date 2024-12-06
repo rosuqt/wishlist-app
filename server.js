@@ -1,41 +1,43 @@
+const { createClient } = require('@supabase/supabase-js');
+
+const supabaseUrl = process.env.SUPABASE_URL; 
+const supabaseKey = process.env.SUPABASE_KEY; 
+
+const supabase = createClient(supabaseUrl, supabaseKey); 
+
+
 const express = require('express');
 const path = require('path');
-const mysql = require('mysql2');
+const { Client } = require('pg');  
 const bodyParser = require('body-parser');
 const cors = require('cors');
-
 
 const app = express();
 const port = 3000;
 
-// Serve static files from the "wishlist" folder
 app.use(express.static(path.join(__dirname, 'wishlist')));
-app.use(express.json());  // Middleware to parse JSON bodies
+app.use(express.json());  
 app.use(cors());
 
+const client = new Client({
+  connectionString: 'postgresql://postgres.ipbjyyglslqvdrsmmcvl:Paramore867@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres', // Direct connection string (replace with environment variable if needed)
+});
 
+client.connect()
+  .then(() => console.log('Connected to PostgreSQL'))
+  .catch(err => console.error('Failed to connect to PostgreSQL', err));
 
+// Route to serve landing page
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'wishlist', 'homepage.html')); // Landing page
 });
 
+// Route to serve wishlist page
 app.get('/wish.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'wishlist', 'wish.html')); // Wishlist page
 });
 
-
-
-
-const pool = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
-  password: 'Paramore867',
-  database: 'wishlistDB',
-  waitForConnections: true,  
-  connectionLimit: 10,      
-  queueLimit: 0             
-});
-
+// Route to add or update wishlist items
 app.post('/addItem', (req, res) => {
   const { name, link, price, image, notes, priority, wishlistNumber, updateIndex } = req.body;
 
@@ -44,7 +46,6 @@ app.post('/addItem', (req, res) => {
     return res.status(400).json({ success: false, message: "Missing required fields." });
   }
 
-  // Convert price to a number (if it's coming in as a string)
   const priceNum = parseFloat(price);
   if (isNaN(priceNum)) {
     return res.status(400).json({ success: false, message: "Invalid price." });
@@ -52,151 +53,114 @@ app.post('/addItem', (req, res) => {
 
   if (updateIndex !== null && updateIndex !== undefined) { // Update existing item
     // Check if the item exists in the database
-    const checkExistenceQuery = `SELECT id FROM wishlist_items WHERE id = ? AND wishlistNumber = ?`;
-    
-    pool.query(checkExistenceQuery, [updateIndex, wishlistNumber], (err, result) => {
-      if (err) {
-        console.error('Error checking item existence:', err);
-        return res.status(500).json({ success: false, message: 'Error checking item existence.' });
-      }
+    const checkExistenceQuery = `SELECT id FROM wishlist_items WHERE id = $1 AND wishlistNumber = $2`;
 
-      if (result.length === 0) {
-        return res.status(404).json({ success: false, message: 'Item not found for update.' });
-      }
-
-      // Proceed with updating the item
-      const updateQuery = `
-        UPDATE wishlist_items 
-        SET name = ?, link = ?, price = ?, image = ?, notes = ?, priority = ? 
-        WHERE id = ? AND wishlistNumber = ?
-      `;
-
-      pool.query(updateQuery, [
-        name,
-        link,
-        priceNum,  // Use the numeric value for price
-        image,
-        notes,
-        priority,
-        updateIndex,
-        wishlistNumber
-      ], (err, result) => {
-        if (err) {
-          console.error('Error updating item:', err);
-          return res.status(500).json({ success: false, message: 'Error updating item.' });
+    client.query(checkExistenceQuery, [updateIndex, wishlistNumber])
+      .then(result => {
+        if (result.rows.length === 0) {
+          return res.status(404).json({ success: false, message: 'Item not found for update.' });
         }
 
-        console.log('Update result:', result);
-        res.json({ success: true, message: 'Item updated successfully.' });
+        // Proceed with updating the item
+        const updateQuery = `
+          UPDATE wishlist_items 
+          SET name = $1, link = $2, price = $3, image = $4, notes = $5, priority = $6 
+          WHERE id = $7 AND wishlistNumber = $8
+        `;
+
+        client.query(updateQuery, [
+          name, link, priceNum, image, notes, priority, updateIndex, wishlistNumber
+        ])
+          .then(() => res.json({ success: true, message: 'Item updated successfully.' }))
+          .catch(err => {
+            console.error('Error updating item:', err);
+            res.status(500).json({ success: false, message: 'Error updating item.' });
+          });
+      })
+      .catch(err => {
+        console.error('Error checking item existence:', err);
+        res.status(500).json({ success: false, message: 'Error checking item existence.' });
       });
-    });
   } else { // Add new item
     const insertQuery = `
       INSERT INTO wishlist_items (name, link, price, image, notes, priority, wishlistNumber) 
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
     `;
 
-    pool.query(insertQuery, [
-      name,
-      link,
-      priceNum,  // Use the numeric value for price
-      image,
-      notes,
-      priority,
-      wishlistNumber
-    ], (err, result) => {
-      if (err) {
+    client.query(insertQuery, [
+      name, link, priceNum, image, notes, priority, wishlistNumber
+    ])
+      .then(() => res.json({ success: true, message: 'Item added successfully.' }))
+      .catch(err => {
         console.error('Error adding item:', err);
-        return res.status(500).json({ success: false, message: 'Error adding item.' });
-      }
-
-      console.log('Insert result:', result);
-      res.json({ success: true, message: 'Item added successfully.' });
-    });
+        res.status(500).json({ success: false, message: 'Error adding item.' });
+      });
   }
 });
 
-
-
-
+// Route to get wishlist items
 app.get('/getWishlistItems/:wishlistNumber', (req, res) => {
   const wishlistNumber = req.params.wishlistNumber;
 
-  const query = `SELECT * FROM wishlist_items WHERE wishlistNumber = ? AND bought = false`;
+  const query = `SELECT * FROM wishlist_items WHERE wishlistNumber = $1 AND bought = false`;
 
-  pool.query(query, [wishlistNumber], (err, results) => {
-    if (err) {
+  client.query(query, [wishlistNumber])
+    .then(result => res.json({ success: true, items: result.rows }))
+    .catch(err => {
       console.error('Error fetching items:', err);
-      return res.status(500).json({ success: false, message: 'Error fetching wishlist items' });
-    }
-
-    res.json({ success: true, items: results });
-  });
+      res.status(500).json({ success: false, message: 'Error fetching wishlist items' });
+    });
 });
 
+// Route to delete an item
 app.post('/deleteItem', (req, res) => {
-  console.log('Request received:', req.body); // Debug log
   const { wishlistNumber, id } = req.body;
 
-  if (!wishlistNumber) {
-      console.error("Wishlist number not provided!"); // Log missing number
-      return res.status(400).send({ success: false, message: "Wishlist number not identified" });
+  if (!wishlistNumber || !id) {
+    return res.status(400).json({ success: false, message: "Missing wishlistNumber or id" });
   }
 
-  if (!id) {
-      console.error("Item ID not provided!"); // Log missing ID
-      return res.status(400).send({ success: false, message: "Item ID not provided" });
-  }
-
-  const query = 'DELETE FROM wishlist_items WHERE id = ? AND wishlistNumber = ?';
-  pool.query(query, [id, wishlistNumber], (err, results) => { // Use pool.query here
-      if (err) {
-          console.error('Database error:', err);
-          return res.status(500).send({ success: false, message: 'Database error' });
-      }
-      res.send({ success: true, message: 'Item deleted successfully' });
-  });
+  const query = 'DELETE FROM wishlist_items WHERE id = $1 AND wishlistNumber = $2';
+  client.query(query, [id, wishlistNumber])
+    .then(() => res.json({ success: true, message: 'Item deleted successfully' }))
+    .catch(err => {
+      console.error('Error deleting item:', err);
+      res.status(500).json({ success: false, message: 'Database error' });
+    });
 });
 
-
+// Route to mark item as bought
 app.post('/markAsBought', (req, res) => {
   const { wishlistNumber, id } = req.body;
 
-  if (!wishlistNumber) {
-      return res.status(400).json({ success: false, message: 'Wishlist number not provided.' });
+  if (!wishlistNumber || !id) {
+    return res.status(400).json({ success: false, message: 'Wishlist number or item ID not provided.' });
   }
 
-  if (!id) {
-      return res.status(400).json({ success: false, message: 'Item ID not provided.' });
-  }
+  const query = `UPDATE wishlist_items SET bought = true WHERE id = $1 AND wishlistNumber = $2`;
 
-  const query = `UPDATE wishlist_items SET bought = true WHERE id = ? AND wishlistNumber = ?`;
-
-  pool.query(query, [id, wishlistNumber], (err, result) => {
-      if (err) {
-          console.error('Error marking item as bought:', err);
-          return res.status(500).json({ success: false, message: 'Error marking item as bought.' });
-      }
-      res.json({ success: true, message: 'Item marked as bought successfully.' });
-  });
+  client.query(query, [id, wishlistNumber])
+    .then(() => res.json({ success: true, message: 'Item marked as bought successfully.' }))
+    .catch(err => {
+      console.error('Error marking item as bought:', err);
+      res.status(500).json({ success: false, message: 'Error marking item as bought.' });
+    });
 });
 
-
-app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
-});
-
+// Route to get bought items
 app.get('/getBoughtItems/:wishlistNumber', (req, res) => {
   const wishlistNumber = req.params.wishlistNumber;
 
-  const query = `SELECT * FROM wishlist_items WHERE wishlistNumber = ? AND bought = true`;
+  const query = `SELECT * FROM wishlist_items WHERE wishlistNumber = $1 AND bought = true`;
 
-  pool.query(query, [wishlistNumber], (err, results) => {
-      if (err) {
-          console.error('Error fetching bought items:', err);
-          return res.status(500).json({ success: false, message: 'Error fetching bought items' });
-      }
+  client.query(query, [wishlistNumber])
+    .then(result => res.json({ success: true, items: result.rows }))
+    .catch(err => {
+      console.error('Error fetching bought items:', err);
+      res.status(500).json({ success: false, message: 'Error fetching bought items' });
+    });
+});
 
-      res.json({ success: true, items: results });
-  });
+app.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}`);
 });
