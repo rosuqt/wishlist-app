@@ -9,8 +9,9 @@ const cors = require('cors');
 const app = express();
 const port = 3000;
 
-const supabaseUrl = process.env.SUPABASE_URL; 
-const supabaseKey = process.env.SUPABASE_KEY; 
+// Use the correct environment variable names
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL; 
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY; 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 app.use(express.static(path.join(__dirname, 'wishlist')));
