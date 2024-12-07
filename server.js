@@ -1,5 +1,4 @@
 require('dotenv').config();
-
 const { createClient } = require('@supabase/supabase-js');
 const express = require('express');
 const path = require('path');
@@ -12,19 +11,51 @@ const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+// Use the environment variable for allowed frontend URL(s)
+const allowedOrigins = [process.env.FRONTEND_URL]; // Add the frontend URL(s) here
+
+// Configure CORS to allow only the allowed frontend URLs
 const corsOptions = {
-  origin: '*', 
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);  // Allow the request
+    } else {
+      callback(new Error('Not allowed by CORS'));  // Block the request
+    }
+  },
   methods: ['GET', 'POST', 'DELETE', 'PUT'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 };
 
-app.use(cors(corsOptions));
+app.use(cors(corsOptions));  // Apply CORS middleware
+
 app.use(express.static(path.join(__dirname, 'wishlist')));
 app.use(express.json());
 
+// Define routes
+app.get('/', (req, res) => {
+  res.send('Hello, world!');
+});
+
+// Add your API routes here, e.g., for getting or updating wishlist items
+app.get('/getWishlistItems/:wishlistNumber', async (req, res) => {
+  const wishlistNumber = req.params.wishlistNumber;
+
+  const { data, error } = await supabase
+    .from('wishlist_items')
+    .select('*')
+    .eq('wishlistNumber', wishlistNumber)
+    .eq('bought', false);
+
+  if (error) {
+    console.error('Error fetching wishlist items:', error);
+    return res.status(500).json({ success: false, message: 'Error fetching wishlist items' });
+  }
+
+  res.json({ success: true, items: data });
+});
 
 
-// Routes
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'wishlist', 'homepage.html'));
 });
