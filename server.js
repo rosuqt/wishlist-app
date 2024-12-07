@@ -3,35 +3,27 @@ require('dotenv').config();
 const { createClient } = require('@supabase/supabase-js');
 const express = require('express');
 const path = require('path');
-const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const app = express();
 const port = 3000;
 
-// Use the correct environment variable names
-const supabaseUrl = process.env.SUPABASE_URL; 
-const supabaseKey = process.env.SUPABASE_KEY; 
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 app.use(express.static(path.join(__dirname, 'wishlist')));
+
 app.use(express.json());
 
-
 const corsOptions = {
-  origin: '*', // Allow all domains (or specify a domain if needed)
+  origin: 'https://wishlist-backend-fftf2dycs-rosuqts-projects.vercel.app/wish.html?wishlist=1',
   methods: ['GET', 'POST', 'DELETE', 'PUT'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 };
+app.use(cors(corsOptions));
 
-app.use(cors({
-  origin: '*',  // Allow all origins
-}));
-
-const API_URL = 'https://wishlist-backend-rose.vercel.app';  // Replace with your actual deployed URL
-
-
-
+// Define routes
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'wishlist', 'homepage.html'));
 });
@@ -39,6 +31,9 @@ app.get('/', (req, res) => {
 app.get('/wish.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'wishlist', 'wish.html'));
 });
+
+
+
 
 app.post('/addItem', async (req, res) => {
   const { name, link, price, image, notes, priority, wishlistNumber, updateIndex } = req.body;
