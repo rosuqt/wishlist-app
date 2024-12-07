@@ -1,5 +1,3 @@
-const backendUrl = process.env.BACKEND_URL || 'https://wishlist-backend.vercel.app';
-
 function changeText(button, newText) {
     button.style.opacity = 0;
   
