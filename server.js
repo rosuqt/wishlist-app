@@ -9,7 +9,6 @@ const cors = require('cors');
 const app = express();
 const port = 3000;
 
-// Use the correct environment variable names
 const supabaseUrl = process.env.SUPABASE_URL; 
 const supabaseKey = process.env.SUPABASE_KEY; 
 const supabase = createClient(supabaseUrl, supabaseKey);
