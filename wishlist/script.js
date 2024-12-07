@@ -1,43 +1,4 @@
-const { createClient } = require('@supabase/supabase-js');
-const express = require('express');
-const path = require('path');
-const cors = require('cors');
-
-const app = express();
-const port = process.env.PORT || 3000;
-
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_KEY;
-const supabase = createClient(supabaseUrl, supabaseKey);
-
 const backendUrl = process.env.BACKEND_URL || 'https://wishlist-backend.vercel.app';
-
-const corsOptions = {
-  origin: '*', 
-  methods: ['GET', 'POST', 'DELETE', 'PUT'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-};
-app.use(cors(corsOptions));
-app.use(express.static(path.join(__dirname, 'wishlist')));
-app.use(express.json());
-
-function changeText(button, newText) {
-    button.style.opacity = 0;
-
-    setTimeout(() => {
-        button.textContent = newText;
-        button.style.opacity = 1;
-    }, 200);
-}
-
-function resetText(button, originalText) {
-    button.style.opacity = 0;
-
-    setTimeout(() => {
-        button.textContent = originalText;
-        button.style.opacity = 1;
-    }, 200);
-}
 
 const wishlists = {
     1: [],
@@ -94,12 +55,7 @@ function showWishlist(wishlistNumber) {
 
 function fetchWishlistData(wishlistNumber) {
     fetch(`${backendUrl}/getWishlistItems/${wishlistNumber}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Failed to fetch: ${response.status} ${response.statusText}`);
-            }
-            return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
             if (data.success) {
                 wishlists[wishlistNumber] = data.items;
@@ -128,7 +84,7 @@ function addOrUpdateItem(event) {
         updateIndex: document.getElementById("updateIndex").value || null
     };
 
-    fetch(`${backendUrl}/api/addItem`, {
+    fetch(`${backendUrl}/addItem`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(productData)
@@ -151,7 +107,7 @@ function addOrUpdateItem(event) {
 function deleteItem(wishlistNumber, itemIndex) {
     const item = wishlists[wishlistNumber][itemIndex];
 
-    fetch(`${backendUrl}/api/deleteItem`, {
+    fetch(`${backendUrl}/deleteItem`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ wishlistNumber, id: item.id })
@@ -173,7 +129,7 @@ function deleteItem(wishlistNumber, itemIndex) {
 function markAsBought(wishlistNumber, itemIndex) {
     const item = wishlists[wishlistNumber][itemIndex];
 
-    fetch(`${backendUrl}/api/markAsBought`, {
+    fetch(`${backendUrl}/markAsBought`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ wishlistNumber, id: item.id })
@@ -193,15 +149,14 @@ function markAsBought(wishlistNumber, itemIndex) {
 }
 
 function viewAlreadyBought(wishlistNumber) {
-    fetch(`${backendUrl}/api/getBoughtItems/${wishlistNumber}`)
+    fetch(`${backendUrl}/getBoughtItems/${wishlistNumber}`)
         .then(response => response.json())
         .then(data => {
             const container = document.getElementById("wishlistContainer");
             container.innerHTML = `<h2>Wishlist ${wishlistNumber} - Already Bought Items</h2>`;
 
             if (data.items && data.items.length === 0) {
-                container.innerHTML += `
-                    <p class="loading-text">No items have been bought yet!</p>`;
+                container.innerHTML += `<p class="loading-text">No items have been bought yet!</p>`;
             } else {
                 data.items.forEach(item => {
                     const itemElement = document.createElement("div");
