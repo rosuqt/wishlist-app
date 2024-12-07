@@ -9,17 +9,10 @@ const cors = require('cors');
 const app = express();
 const port = 3000;
 
-const supabaseUrl = 'https://ipbjyyglslqvdrsmmcvl.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlwYmp5eWdsc2xxdmRyc21tY3ZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzM0NzQ0NzgsImV4cCI6MjA0OTA1MDQ3OH0.WJz6PJKb1NO-LfsSZ9Ad_y4VCDWNta9eI6ErPEt4qwI';
-
+// Use the correct environment variable names
+const supabaseUrl = process.env.SUPABASE_URL; 
+const supabaseKey = process.env.SUPABASE_KEY; 
 const supabase = createClient(supabaseUrl, supabaseKey);
-
-const dbClient = new Client({
-  connectionString: process.env.SUPABASE_DB_URL,
-});
-
-dbClient.connect();
-
 
 app.use(express.static(path.join(__dirname, 'wishlist')));
 app.use(express.json());
