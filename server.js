@@ -14,6 +14,12 @@ const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+const dbClient = new Client({
+  connectionString: process.env.SUPABASE_DB_URL,
+});
+
+dbClient.connect();
+
 
 app.use(express.static(path.join(__dirname, 'wishlist')));
 app.use(express.json());
