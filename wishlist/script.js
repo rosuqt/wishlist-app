@@ -70,8 +70,14 @@ function showWishlist(wishlistNumber) {
 }
 
 function fetchWishlistData(wishlistNumber) {
-    fetch(`https://wishlist-backend.vercel.app/api/getWishlistItems/${wishlistNumber}`)
-        .then(response => response.json())
+    fetch(`https://wishlist-backend.vercel.app/getWishlistItems/${wishlistNumber}`)
+        .then(response => {
+            // Check if response is successful (status 200)
+            if (!response.ok) {
+                throw new Error(`Failed to fetch: ${response.status} ${response.statusText}`);
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.success) {
                 wishlists[wishlistNumber] = data.items;
@@ -85,6 +91,7 @@ function fetchWishlistData(wishlistNumber) {
             alert("An error occurred while fetching the wishlist");
         });
 }
+
 
 function addOrUpdateItem(event) {
     event.preventDefault();

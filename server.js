@@ -6,24 +6,23 @@ const path = require('path');
 const cors = require('cors');
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 app.use(express.static(path.join(__dirname, 'wishlist')));
-
 app.use(express.json());
 
 const corsOptions = {
-  origin: 'https://wishlist-backend-fftf2dycs-rosuqts-projects.vercel.app/wish.html?wishlist=1',
+  origin: '*', 
   methods: ['GET', 'POST', 'DELETE', 'PUT'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 };
 app.use(cors(corsOptions));
 
-// Define routes
+// Routes
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'wishlist', 'homepage.html'));
 });
@@ -31,9 +30,6 @@ app.get('/', (req, res) => {
 app.get('/wish.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'wishlist', 'wish.html'));
 });
-
-
-
 
 app.post('/addItem', async (req, res) => {
   const { name, link, price, image, notes, priority, wishlistNumber, updateIndex } = req.body;
@@ -96,65 +92,6 @@ app.get('/getWishlistItems/:wishlistNumber', async (req, res) => {
   if (error) {
     console.error('Error fetching wishlist items:', error);
     return res.status(500).json({ success: false, message: 'Error fetching wishlist items' });
-  }
-
-  res.json({ success: true, items: data });
-});
-
-app.post('/deleteItem', async (req, res) => {
-  const { wishlistNumber, id } = req.body;
-
-  if (!wishlistNumber || !id) {
-    return res.status(400).json({ success: false, message: "Missing wishlistNumber or id" });
-  }
-
-  const { error } = await supabase
-    .from('wishlist_items')
-    .delete()
-    .eq('id', id)
-    .eq('wishlistNumber', wishlistNumber);
-
-  if (error) {
-    console.error('Error deleting item:', error);
-    return res.status(500).json({ success: false, message: 'Error deleting item' });
-  }
-
-  res.json({ success: true, message: 'Item deleted successfully' });
-});
-
-app.post('/markAsBought', async (req, res) => {
-  const { wishlistNumber, id } = req.body;
-
-  if (!wishlistNumber || !id) {
-    return res.status(400).json({ success: false, message: 'Wishlist number or item ID not provided.' });
-  }
-
-  const { error } = await supabase
-    .from('wishlist_items')
-    .update({ bought: true })
-    .eq('id', id)
-    .eq('wishlistNumber', wishlistNumber);
-
-  if (error) {
-    console.error('Error marking item as bought:', error);
-    return res.status(500).json({ success: false, message: 'Error marking item as bought.' });
-  }
-
-  res.json({ success: true, message: 'Item marked as bought successfully.' });
-});
-
-app.get('/getBoughtItems/:wishlistNumber', async (req, res) => {
-  const wishlistNumber = req.params.wishlistNumber;
-
-  const { data, error } = await supabase
-    .from('wishlist_items')
-    .select('*')
-    .eq('wishlistNumber', wishlistNumber)
-    .eq('bought', true);
-
-  if (error) {
-    console.error('Error fetching bought items:', error);
-    return res.status(500).json({ success: false, message: 'Error fetching bought items' });
   }
 
   res.json({ success: true, items: data });
