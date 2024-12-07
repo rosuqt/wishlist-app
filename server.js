@@ -151,6 +151,6 @@ app.get('/getBoughtItems/:wishlistNumber', async (req, res) => {
   res.json({ success: true, items: data });
 });
 
-app.listen(port, () => {
+app.listen(port, '0.0.0.0', () => {
   console.log(`Server running on http://localhost:${port}`);
 });
