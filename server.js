@@ -32,11 +32,6 @@ app.use(cors(corsOptions));  // Apply CORS middleware
 app.use(express.static(path.join(__dirname, 'wishlist')));
 app.use(express.json());
 
-// Define routes
-app.get('/', (req, res) => {
-  res.send('Hello, world!');
-});
-
 // Add your API routes here, e.g., for getting or updating wishlist items
 app.get('/getWishlistItems/:wishlistNumber', async (req, res) => {
   const wishlistNumber = req.params.wishlistNumber;
