@@ -1,53 +1,29 @@
-import express from 'express'; // Using ES6 imports
-import path from 'path';
-import cors from 'cors';
-import { createClient } from '@supabase/supabase-js';
+require('dotenv').config();
+
+const { createClient } = require('@supabase/supabase-js');
+const express = require('express');
+const path = require('path');
+const bodyParser = require('body-parser');
+const cors = require('cors');
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = 3000;
 
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_KEY;
+// Use the correct environment variable names
+const supabaseUrl = process.env.SUPABASE_URL; 
+const supabaseKey = process.env.SUPABASE_KEY; 
 const supabase = createClient(supabaseUrl, supabaseKey);
-
-// Use the environment variable for allowed frontend URL(s)
-const allowedOrigins = [process.env.FRONTEND_URL]; // Add the frontend URL(s) here
-
-// Configure CORS to allow only the allowed frontend URLs
-const corsOptions = {
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);  // Allow the request
-    } else {
-      callback(new Error('Not allowed by CORS'));  // Block the request
-    }
-  },
-  methods: ['GET', 'POST', 'DELETE', 'PUT'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-};
-
-app.use(cors(corsOptions));  // Apply CORS middleware
 
 app.use(express.static(path.join(__dirname, 'wishlist')));
 app.use(express.json());
+app.use(cors());
 
-// API routes
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'wishlist', 'homepage.html'));
+});
 
-app.get('/getWishlistItems/:wishlistNumber', async (req, res) => {
-  const wishlistNumber = req.params.wishlistNumber;
-
-  const { data, error } = await supabase
-    .from('wishlist_items')
-    .select('*')
-    .eq('wishlistNumber', wishlistNumber)
-    .eq('bought', false);
-
-  if (error) {
-    console.error('Error fetching wishlist items:', error);
-    return res.status(500).json({ success: false, message: 'Error fetching wishlist items' });
-  }
-
-  res.json({ success: true, items: data });
+app.get('/wish.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'wishlist', 'wish.html'));
 });
 
 app.post('/addItem', async (req, res) => {
@@ -99,10 +75,31 @@ app.post('/addItem', async (req, res) => {
   }
 });
 
+app.get('/getWishlistItems/:wishlistNumber', async (req, res) => {
+  const wishlistNumber = req.params.wishlistNumber;
+
+  const { data, error } = await supabase
+    .from('wishlist_items')
+    .select('*')
+    .eq('wishlistNumber', wishlistNumber)
+    .eq('bought', false);
+
+  if (error) {
+    console.error('Error fetching wishlist items:', error);
+    return res.status(500).json({ success: false, message: 'Error fetching wishlist items' });
+  }
+
+  res.json({ success: true, items: data });
+});
+
 app.post('/deleteItem', async (req, res) => {
   const { wishlistNumber, id } = req.body;
 
-  const { data, error } = await supabase
+  if (!wishlistNumber || !id) {
+    return res.status(400).json({ success: false, message: "Missing wishlistNumber or id" });
+  }
+
+  const { error } = await supabase
     .from('wishlist_items')
     .delete()
     .eq('id', id)
@@ -113,11 +110,15 @@ app.post('/deleteItem', async (req, res) => {
     return res.status(500).json({ success: false, message: 'Error deleting item' });
   }
 
-  res.json({ success: true, message: 'Item deleted successfully.' });
+  res.json({ success: true, message: 'Item deleted successfully' });
 });
 
 app.post('/markAsBought', async (req, res) => {
   const { wishlistNumber, id } = req.body;
+
+  if (!wishlistNumber || !id) {
+    return res.status(400).json({ success: false, message: 'Wishlist number or item ID not provided.' });
+  }
 
   const { error } = await supabase
     .from('wishlist_items')
@@ -127,10 +128,27 @@ app.post('/markAsBought', async (req, res) => {
 
   if (error) {
     console.error('Error marking item as bought:', error);
-    return res.status(500).json({ success: false, message: 'Error marking item as bought' });
+    return res.status(500).json({ success: false, message: 'Error marking item as bought.' });
   }
 
-  res.json({ success: true, message: 'Item marked as bought.' });
+  res.json({ success: true, message: 'Item marked as bought successfully.' });
+});
+
+app.get('/getBoughtItems/:wishlistNumber', async (req, res) => {
+  const wishlistNumber = req.params.wishlistNumber;
+
+  const { data, error } = await supabase
+    .from('wishlist_items')
+    .select('*')
+    .eq('wishlistNumber', wishlistNumber)
+    .eq('bought', true);
+
+  if (error) {
+    console.error('Error fetching bought items:', error);
+    return res.status(500).json({ success: false, message: 'Error fetching bought items' });
+  }
+
+  res.json({ success: true, items: data });
 });
 
 app.listen(port, '0.0.0.0', () => {
