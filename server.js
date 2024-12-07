@@ -16,7 +16,21 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 app.use(express.static(path.join(__dirname, 'wishlist')));
 app.use(express.json());
-app.use(cors());
+
+
+const corsOptions = {
+  origin: '*', // Allow all domains (or specify a domain if needed)
+  methods: ['GET', 'POST', 'DELETE', 'PUT'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+app.use(cors({
+  origin: '*',  // Allow all origins
+}));
+
+const API_URL = 'https://wishlist-backend-rose.vercel.app';  // Replace with your actual deployed URL
+
+
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'wishlist', 'homepage.html'));
