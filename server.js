@@ -9,6 +9,7 @@ const cors = require('cors');
 const app = express();
 const port = 3000;
 
+// Use the correct environment variable names
 const supabaseUrl = process.env.SUPABASE_URL; 
 const supabaseKey = process.env.SUPABASE_KEY; 
 const supabase = createClient(supabaseUrl, supabaseKey);
@@ -150,6 +151,6 @@ app.get('/getBoughtItems/:wishlistNumber', async (req, res) => {
   res.json({ success: true, items: data });
 });
 
-app.listen(port, '0.0.0.0', () => {
+app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
