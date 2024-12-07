@@ -16,6 +16,8 @@ function resetText(button, originalText) {
     }, 200); 
 }
 
+
+
 const wishlists = {
     1: [],
     2: []
@@ -62,6 +64,8 @@ function showWishlist(wishlistNumber) {
             `;
             container.appendChild(itemElement);
         });
+        
+        
     }
 
     const addButton = document.createElement("button");
@@ -71,7 +75,7 @@ function showWishlist(wishlistNumber) {
 }
 
 function fetchWishlistData(wishlistNumber) {
-    fetch(`${backendUrl}/getWishlistItems/${wishlistNumber}`)
+    fetch(`http://localhost:3000/getWishlistItems/${wishlistNumber}`)
         .then(response => response.json())
         .then(data => {
             if (data.success) {
@@ -101,9 +105,10 @@ function addOrUpdateItem(event) {
         updateIndex: document.getElementById("updateIndex").value || null 
     };
 
+    
     console.log("Product Data being sent:", productData);
     
-    fetch(`${backendUrl}/addItem`, {
+    fetch('/addItem', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(productData)
@@ -123,7 +128,11 @@ function addOrUpdateItem(event) {
         console.error('Error:', error);
         showResponseBox('An error occurred while processing the request.', 'error');
     });
+    
 }
+
+
+
 
 function openAddItemForm(wishlistNumber) {
     const form = document.getElementById("addItemForm");
@@ -138,6 +147,7 @@ function openAddItemForm(wishlistNumber) {
     document.getElementById("productPriority").value = "";
 }
 
+
 function editItem(wishlistNumber, itemIndex) {
     const item = wishlists[wishlistNumber][itemIndex];
     openAddItemForm(wishlistNumber);
@@ -151,12 +161,15 @@ function editItem(wishlistNumber, itemIndex) {
     document.getElementById("updateIndex").value = item.id; 
 }
 
+
+
+
 function deleteItem(wishlistNumber, itemIndex) {
     const item = wishlists[wishlistNumber][itemIndex];
     console.log('Deleting item:', item); 
     console.log('Wishlist number:', wishlistNumber); 
 
-    fetch(`${backendUrl}/deleteItem`, {
+    fetch('http://localhost:3000/deleteItem', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -178,10 +191,11 @@ function deleteItem(wishlistNumber, itemIndex) {
     });
 }
 
+
 function markAsBought(wishlistNumber, itemIndex) {
     const item = wishlists[wishlistNumber][itemIndex]; 
 
-    fetch(`${backendUrl}/markAsBought`, {
+    fetch('http://localhost:3000/markAsBought', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -203,17 +217,19 @@ function markAsBought(wishlistNumber, itemIndex) {
     });
 }
 
+
 function viewAlreadyBought(wishlistNumber) {
-    fetch(`${backendUrl}/getBoughtItems/${wishlistNumber}`)
+    fetch(`http://localhost:3000/getBoughtItems/${wishlistNumber}`)
         .then(response => response.json())
         .then(data => {
             const container = document.getElementById("wishlistContainer");
-            container.innerHTML = `<h2>Wishlist ${wishlistNumber} - Already Bought Items</h2>`;
+            container.innerHTML = ` <h2>Wishlist ${wishlistNumber} - Already Bought Items</h2> `;
 
             if (data.items && data.items.length === 0) {
                 container.innerHTML += `
-                    <img src="waiting.webp" alt="Loading..." class="loading-image" />
-                    <p class="loading-text">Its Empty (◞‸ ◟)💧...</p>`;
+    <img src="waiting.webp" alt="Loading..." class="loading-image" />
+    <p class="loading-text">Its Empty (◞‸ ◟)💧...</p>`;
+
             } else {
                 data.items.forEach(item => {
                     const itemElement = document.createElement("div");
@@ -253,6 +269,8 @@ window.onload = function() {
         document.getElementById("wishlistContainer").innerHTML = `
     <img src="waiting.webp" alt="Loading..." class="loading-image" />
     <p class="loading-text">Its Empty (◞‸ ◟)💧...</p>`;
+        
+
     }
 };
 
@@ -263,19 +281,28 @@ function showResponseBox(status, message, data) {
     const countdownElement = document.getElementById('countdown');
     const closeBtn = document.getElementById('closeBtn');
     const okBtn = document.getElementById('okBtn');
+    
+    messageElement.textContent = message;
+    countdownElement.textContent = '5';
+
+    if (status === 'error') {
+        document.getElementById('responseHeader').classList.add('errorHeader');
+        document.getElementById('responseHeader').classList.remove('successHeader');
+        statusElement.textContent = 'Error';
+    } else {
+        document.getElementById('responseHeader').classList.add('successHeader');
+        document.getElementById('responseHeader').classList.remove('errorHeader');
+        statusElement.textContent = 'Success';
+    }
 
     responseBox.style.display = 'block';
-    statusElement.textContent = status;
-    messageElement.textContent = message;
 
-    let countdown = 5;
-    countdownElement.textContent = countdown;
-
+    let countdownValue = 3;
     const countdownInterval = setInterval(() => {
-        countdown--;
-        countdownElement.textContent = countdown;
+        countdownValue--;
+        countdownElement.textContent = countdownValue;
 
-        if (countdown === 0) {
+        if (countdownValue === 0) {
             clearInterval(countdownInterval);
             responseBox.style.display = 'none';
         }
@@ -290,4 +317,27 @@ function showResponseBox(status, message, data) {
         clearInterval(countdownInterval);
         responseBox.style.display = 'none';
     });
-};
+}
+
+
+const okBtn = document.getElementById('okBtn');
+
+okBtn.addEventListener('mouseenter', () => {
+    okBtn.textContent = '(^▽^)👍';
+});
+
+okBtn.addEventListener('mouseleave', () => {
+    okBtn.textContent = 'OK';
+});
+
+window.addEventListener('load', function() {
+    const loader = document.getElementById('loader');
+
+    setTimeout(function() {
+        loader.classList.add('fade-out');
+        
+        loader.addEventListener('transitionend', function() {
+            loader.style.display = 'none';
+        });
+    }, 500); 
+});
