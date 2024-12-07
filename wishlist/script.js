@@ -1,3 +1,27 @@
+require('dotenv').config();
+const { createClient } = require('@supabase/supabase-js');
+const express = require('express');
+const path = require('path');
+const cors = require('cors');
+
+const app = express();
+const port = process.env.PORT || 3000;
+
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+const backendUrl = process.env.BACKEND_URL || 'https://wishlist-backend.vercel.app';
+
+const corsOptions = {
+  origin: '*', 
+  methods: ['GET', 'POST', 'DELETE', 'PUT'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+app.use(cors(corsOptions));
+app.use(express.static(path.join(__dirname, 'wishlist')));
+app.use(express.json());
+
 function changeText(button, newText) {
     button.style.opacity = 0;
 
@@ -70,9 +94,8 @@ function showWishlist(wishlistNumber) {
 }
 
 function fetchWishlistData(wishlistNumber) {
-    fetch(`https://wishlist-backend.vercel.app/getWishlistItems/${wishlistNumber}`)
+    fetch(`${backendUrl}/getWishlistItems/${wishlistNumber}`)
         .then(response => {
-            // Check if response is successful (status 200)
             if (!response.ok) {
                 throw new Error(`Failed to fetch: ${response.status} ${response.statusText}`);
             }
@@ -92,7 +115,6 @@ function fetchWishlistData(wishlistNumber) {
         });
 }
 
-
 function addOrUpdateItem(event) {
     event.preventDefault();
 
@@ -107,7 +129,7 @@ function addOrUpdateItem(event) {
         updateIndex: document.getElementById("updateIndex").value || null
     };
 
-    fetch('https://wishlist-backend.vercel.app/api/addItem', {
+    fetch(`${backendUrl}/api/addItem`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(productData)
@@ -130,7 +152,7 @@ function addOrUpdateItem(event) {
 function deleteItem(wishlistNumber, itemIndex) {
     const item = wishlists[wishlistNumber][itemIndex];
 
-    fetch('https://wishlist-backend.vercel.app/api/deleteItem', {
+    fetch(`${backendUrl}/api/deleteItem`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ wishlistNumber, id: item.id })
@@ -152,7 +174,7 @@ function deleteItem(wishlistNumber, itemIndex) {
 function markAsBought(wishlistNumber, itemIndex) {
     const item = wishlists[wishlistNumber][itemIndex];
 
-    fetch('https://wishlist-backend.vercel.app/api/markAsBought', {
+    fetch(`${backendUrl}/api/markAsBought`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ wishlistNumber, id: item.id })
@@ -172,7 +194,7 @@ function markAsBought(wishlistNumber, itemIndex) {
 }
 
 function viewAlreadyBought(wishlistNumber) {
-    fetch(`https://wishlist-backend.vercel.app/api/getBoughtItems/${wishlistNumber}`)
+    fetch(`${backendUrl}/api/getBoughtItems/${wishlistNumber}`)
         .then(response => response.json())
         .then(data => {
             const container = document.getElementById("wishlistContainer");
