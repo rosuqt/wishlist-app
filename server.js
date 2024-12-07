@@ -12,15 +12,17 @@ const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-app.use(express.static(path.join(__dirname, 'wishlist')));
-app.use(express.json());
-
 const corsOptions = {
   origin: '*', 
   methods: ['GET', 'POST', 'DELETE', 'PUT'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 };
+
 app.use(cors(corsOptions));
+app.use(express.static(path.join(__dirname, 'wishlist')));
+app.use(express.json());
+
+
 
 // Routes
 app.get('/', (req, res) => {
