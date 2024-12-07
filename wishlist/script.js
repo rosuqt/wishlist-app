@@ -75,7 +75,7 @@ function showWishlist(wishlistNumber) {
 }
 
 function fetchWishlistData(wishlistNumber) {
-    fetch(`http://localhost:3000/getWishlistItems/${wishlistNumber}`)
+    fetch(`https://wishlist-backend.vercel.app/getWishlistItems/${wishlistNumber}`)
         .then(response => response.json())
         .then(data => {
             if (data.success) {
@@ -169,7 +169,7 @@ function deleteItem(wishlistNumber, itemIndex) {
     console.log('Deleting item:', item); 
     console.log('Wishlist number:', wishlistNumber); 
 
-    fetch('http://localhost:3000/deleteItem', {
+    fetch('https://wishlist-backend.vercel.app/deleteItem', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -195,7 +195,7 @@ function deleteItem(wishlistNumber, itemIndex) {
 function markAsBought(wishlistNumber, itemIndex) {
     const item = wishlists[wishlistNumber][itemIndex]; 
 
-    fetch('http://localhost:3000/markAsBought', {
+    fetch('https://wishlist-backend.vercel.app/markAsBought', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -219,7 +219,7 @@ function markAsBought(wishlistNumber, itemIndex) {
 
 
 function viewAlreadyBought(wishlistNumber) {
-    fetch(`http://localhost:3000/getBoughtItems/${wishlistNumber}`)
+    fetch(`https://wishlist-backend.vercel.app/getBoughtItems/${wishlistNumber}`)
         .then(response => response.json())
         .then(data => {
             const container = document.getElementById("wishlistContainer");
