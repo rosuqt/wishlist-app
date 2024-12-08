@@ -1,6 +1,6 @@
 function changeText(button, newText) {
     button.style.opacity = 0;
-  
+
     setTimeout(() => {
         button.textContent = newText;
         button.style.opacity = 1;
@@ -36,9 +36,9 @@ function showWishlist(wishlistNumber) {
 
     if (items && items.length === 0) {
         container.innerHTML += `
-     <img src="https://media.giphy.com/media/leuNkvf9pE6loEnjnb/giphy.gif" alt="Loading..." class="loading-image" />
-    <p class="loading-text">Its Empty (◞‸ ◟)💧...</p>`;
-
+            <img src="https://media.giphy.com/media/leuNkvf9pE6loEnjnb/giphy.gif" alt="Loading..." class="loading-image" />
+            <p class="loading-text">Its Empty (◞‸ ◟)💧...</p>
+        `;
     } else {
         items.forEach((item, index) => {
             const itemElement = document.createElement("div");
@@ -208,13 +208,13 @@ function viewAlreadyBought(wishlistNumber) {
         .then(response => response.json())
         .then(data => {
             const container = document.getElementById("wishlistContainer");
-            container.innerHTML = ` <h2>Wishlist ${wishlistNumber} - Already Bought Items</h2> `;
+            container.innerHTML = `<h2>Wishlist ${wishlistNumber} - Already Bought Items</h2>`;
 
             if (data.items && data.items.length === 0) {
                 container.innerHTML += `
-    <img src="waiting.webp" alt="Loading..." class="loading-image" />
-    <p class="loading-text">Its Empty (◞‸ ◟)💧...</p>`;
-
+                    <img src="waiting.webp" alt="Loading..." class="loading-image" />
+                    <p class="loading-text">Its Empty (◞‸ ◟)💧...</p>
+                `;
             } else {
                 data.items.forEach(item => {
                     const itemElement = document.createElement("div");
@@ -252,8 +252,9 @@ window.onload = function() {
         fetchWishlistData(2);
     } else {
         document.getElementById("wishlistContainer").innerHTML = `
-    <img src="waiting.webp" alt="Loading..." class="loading-image" />
-    <p class="loading-text">Its Empty (◞‸ ◟)💧...</p>`;
+            <img src="waiting.webp" alt="Loading..." class="loading-image" />
+            <p class="loading-text">Its Empty (◞‸ ◟)💧...</p>
+        `;
     }
 };
 
