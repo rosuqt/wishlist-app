@@ -140,6 +140,11 @@ function openAddItemForm(wishlistNumber) {
 
 function editItem(wishlistNumber, itemIndex) {
     const item = wishlists[wishlistNumber][itemIndex];
+    if (!item) {
+        showResponseBox('error', "Item not found for editing.");
+        return;
+    }
+
     openAddItemForm(wishlistNumber);
 
     document.getElementById("productName").value = item.name;
@@ -153,33 +158,40 @@ function editItem(wishlistNumber, itemIndex) {
 
 function deleteItem(wishlistNumber, itemIndex) {
     const item = wishlists[wishlistNumber][itemIndex];
-    console.log('Deleting item:', item); 
-    console.log('Wishlist number:', wishlistNumber); 
+    if (!item) {
+        showResponseBox('error', "Item not found for deletion.");
+        return;
+    }
 
     fetch('/deleteItem', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ wishlistNumber, id: item.id }),
+        body: JSON.stringify({ wishlistNumber, id: item.id }), 
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            showResponseBox('success', data.message, data);
-            fetchWishlistData(wishlistNumber);
+            showResponseBox('success', data.message);
+            wishlists[wishlistNumber].splice(itemIndex, 1); 
+            showWishlist(wishlistNumber); 
         } else {
-            showResponseBox('error', data.message, data);
+            showResponseBox('error', data.message);
         }
     })
     .catch(error => {
         console.error('Fetch error:', error);
-        showResponseBox('error', "An error occurred while deleting the item.", error);
+        showResponseBox('error', "An error occurred while deleting the item.");
     });
 }
 
 function markAsBought(wishlistNumber, itemIndex) {
-    const item = wishlists[wishlistNumber][itemIndex]; 
+    const item = wishlists[wishlistNumber][itemIndex];
+    if (!item) {
+        showResponseBox('error', "Item not found for marking as bought.");
+        return;
+    }
 
     fetch('/markAsBought', {
         method: 'POST',
@@ -191,15 +203,16 @@ function markAsBought(wishlistNumber, itemIndex) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            showResponseBox('success', data.message, data);
-            fetchWishlistData(wishlistNumber); 
+            showResponseBox('success', data.message);
+            item.bought = true; 
+            showWishlist(wishlistNumber); 
         } else {
-            showResponseBox('error', data.message, data);
+            showResponseBox('error', data.message);
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        showResponseBox('error', "An error occurred while marking the item as bought.", error);
+        showResponseBox('error', "An error occurred while marking the item as bought.");
     });
 }
 
@@ -309,5 +322,5 @@ okBtn.addEventListener('mouseenter', () => {
 });
 
 okBtn.addEventListener('mouseleave', () => {
-    okBtn.textContent = "Okay";
+    okBtn.textContent = "(^▽^)👍";
 });
