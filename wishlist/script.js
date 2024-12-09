@@ -174,7 +174,7 @@ function deleteItem(wishlistNumber, itemIndex) {
     .then(data => {
         if (data.success) {
             showResponseBox('success', data.message);
-            fetchWishlistData(wishlistNumber);  // Refresh the wishlist
+            fetchWishlistData(wishlistNumber); 
         } else {
             showResponseBox('error', data.message);
         }
@@ -203,7 +203,7 @@ function markAsBought(wishlistNumber, itemIndex) {
     .then(data => {
         if (data.success) {
             showResponseBox('success', data.message);
-            fetchWishlistData(wishlistNumber);  // Refresh the wishlist
+            fetchWishlistData(wishlistNumber);  
         } else {
             showResponseBox('error', data.message);
         }
@@ -318,9 +318,24 @@ function showResponseBox(status, message, data) {
 const okBtn = document.getElementById('okBtn');
 
 okBtn.addEventListener('mouseenter', () => {
-    okBtn.textContent = "Okay!";
+    okBtn.textContent = "(^▽^)👍";
 });
 
 okBtn.addEventListener('mouseleave', () => {
-    okBtn.textContent = "(^▽^)👍";
+    okBtn.textContent = "Okay!";
 });
+
+window.addEventListener("load", function() {
+    const loader = document.getElementById("loader");
+  
+    if (!localStorage.getItem("firstLoadComplete")) {
+      localStorage.setItem("firstLoadComplete", "true");
+  
+      setTimeout(function() {
+        loader.classList.add("hide");
+      }, 2000);
+    } else {
+      loader.classList.add("hide");
+    }
+  });
+  
