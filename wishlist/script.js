@@ -287,18 +287,32 @@ function moveBackToWishlist(wishlistNumber, itemId) {
         if (data.success) {
             console.log('Item successfully moved back');
             showResponseBox('success', 'Item moved back to wishlist successfully!'); 
-            viewAlreadyBought(wishlistNumber);
-        } else {
-            console.error('Failed to move item back:', data.message);
-            showResponseBox('error', 'Failed to move item back. Please try again later.'); 
-        }
-    })
-    .catch((error) => {
-        console.error('Error:', error);
-        showResponseBox('error', 'An error occurred while moving the item back to the wishlist.');
-    });
-}
 
+            
+            viewAlreadyBought(wishlistNumber);
+            fetch(`/getWishlistItems/${wishlistNumber}`)
+            .then(response => response.json())
+            .then(wishlistData => {
+                if (wishlistData.success) {
+                    wishlists[wishlistNumber] = wishlistData.items; // Update local wishlist data
+                } else {
+                    console.error('Failed to fetch wishlist data:', wishlistData.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching wishlist data:', error);
+            });
+
+    } else {
+        console.error('Failed to move item back:', data.message);
+        showResponseBox('error', 'Failed to move item back. Please try again later.');
+    }
+})
+.catch((error) => {
+    console.error('Error:', error);
+    showResponseBox('error', 'An error occurred while moving the item back to the wishlist.');
+});
+}
 
 function closeAddItemForm() {
     document.getElementById("addItemForm").style.display = "none";
