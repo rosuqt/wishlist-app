@@ -330,8 +330,8 @@ window.addEventListener('load', function() {
 
     setTimeout(function() {
         loader.classList.add('fade-out');
-        
-        loader.addEventListener('transitionend', function() {
+
+        loader.addEventListener('animationend', function() {
             loader.style.display = 'none';  
         });
     }, 500); 

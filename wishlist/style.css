@@ -10,8 +10,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    animation: pulse-out 3s infinite, fade-out 2.2s forwards; 
+    animation: pulse-out 3s ease-in-out, fade-out 2.2s 3s forwards;  
 }
+
 
 @keyframes pulse-out {
     0% {
