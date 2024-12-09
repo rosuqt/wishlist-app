@@ -221,12 +221,11 @@ function viewAlreadyBought(wishlistNumber) {
         .then(response => response.json())
         .then(data => {
             const container = document.getElementById("wishlistContainer");
-            
+
             container.innerHTML = ''; 
 
             const header = document.createElement('h2');
-            header.innerHTML = `
-                Wishlist ${wishlistNumber}  𖹭  Already Bought
+            header.innerHTML = `Wishlist ${wishlistNumber}  𖹭  Already Bought
                 <span class="already-bought-link" onclick="showWishlist(${wishlistNumber})">
                     Back to Wishlist <<
                 </span>
@@ -245,7 +244,6 @@ function viewAlreadyBought(wishlistNumber) {
                 loadingImage.className = 'loading-image';
                 container.appendChild(loadingImage);
             } else {
-            
                 data.items.forEach(item => {
                     const itemElement = document.createElement("div");
                     itemElement.className = "wishlistItem";
@@ -257,6 +255,9 @@ function viewAlreadyBought(wishlistNumber) {
                             <p>Priority: ${item.priority || "None"}</p>
                             <p>Notes: ${item.notes || "No notes provided."}</p>
                             <a href="${item.link}" target="_blank">View Product</a>
+                            <button onclick="moveBackToWishlist(${wishlistNumber}, ${item.id})">
+                                Move Back ↺
+                            </button>
                         </div>
                     `;
                     container.appendChild(itemElement);
@@ -269,6 +270,34 @@ function viewAlreadyBought(wishlistNumber) {
         });
 }
 
+function moveBackToWishlist(wishlistNumber, itemId) {
+    fetch(`/updateBoughtStatus`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            wishlistNumber: wishlistNumber, 
+            itemId: itemId,                
+            bought: false                 
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log('Item successfully moved back');
+            showResponseBox('success', 'Item moved back to wishlist successfully!'); 
+            viewAlreadyBought(wishlistNumber);
+        } else {
+            console.error('Failed to move item back:', data.message);
+            showResponseBox('error', 'Failed to move item back. Please try again later.'); 
+        }
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+        showResponseBox('error', 'An error occurred while moving the item back to the wishlist.');
+    });
+}
 
 
 function closeAddItemForm() {

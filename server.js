@@ -117,7 +117,6 @@ app.post('/deleteItem', async (req, res) => {
   res.json({ success: true, message: 'Item deleted successfully' });
 });
 
-
 app.post('/markAsBought', async (req, res) => {
   const { wishlistNumber, id } = req.body;
 
@@ -137,6 +136,27 @@ app.post('/markAsBought', async (req, res) => {
 
   res.json({ success: true, message: 'Item marked as bought successfully.' });
 });
+
+app.post('/updateBoughtStatus', async (req, res) => {
+  const { wishlistNumber, itemId, bought } = req.body;
+
+  if (!wishlistNumber || !itemId) {
+    return res.status(400).json({ success: false, message: 'Wishlist number or item ID not provided.' });
+  }
+
+  const { error } = await supabase
+    .from('wishlist_items')
+    .update({ bought })
+    .eq('id', itemId)
+    .eq('wishlistNumber', wishlistNumber);
+
+  if (error) {
+    return res.status(500).json({ success: false, message: 'Database update failed' });
+  }
+
+  res.json({ success: true, message: 'Item moved back to wishlist' });
+});
+
 
 app.get('/getBoughtItems/:wishlistNumber', async (req, res) => {
   const wishlistNumber = req.params.wishlistNumber;
