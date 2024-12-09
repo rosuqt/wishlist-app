@@ -3,13 +3,11 @@ require('dotenv').config();
 const { createClient } = require('@supabase/supabase-js');
 const express = require('express');
 const path = require('path');
-const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const app = express();
 const port = 3000;
 
-// Use the correct environment variable names
 const supabaseUrl = process.env.SUPABASE_URL; 
 const supabaseKey = process.env.SUPABASE_KEY; 
 const supabase = createClient(supabaseUrl, supabaseKey);
@@ -56,18 +54,16 @@ app.post('/addItem', async (req, res) => {
       .eq('wishlistNumber', wishlistNumber);
 
     if (updateError) {
-      console.error('Error updating item:', updateError);
       return res.status(500).json({ success: false, message: 'Error updating item.' });
     }
 
     return res.json({ success: true, message: 'Item updated successfully.' });
   } else {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('wishlist_items')
       .insert([{ name, link, price: priceNum, image, notes, priority, wishlistNumber }]);
 
     if (error) {
-      console.error('Error adding item:', error);
       return res.status(500).json({ success: false, message: 'Error adding item.' });
     }
 
@@ -85,7 +81,6 @@ app.get('/getWishlistItems/:wishlistNumber', async (req, res) => {
     .eq('bought', false);
 
   if (error) {
-    console.error('Error fetching wishlist items:', error);
     return res.status(500).json({ success: false, message: 'Error fetching wishlist items' });
   }
 
@@ -106,7 +101,6 @@ app.post('/deleteItem', async (req, res) => {
     .eq('wishlistNumber', wishlistNumber);
 
   if (error) {
-    console.error('Error deleting item:', error);
     return res.status(500).json({ success: false, message: 'Error deleting item' });
   }
 
@@ -127,7 +121,6 @@ app.post('/markAsBought', async (req, res) => {
     .eq('wishlistNumber', wishlistNumber);
 
   if (error) {
-    console.error('Error marking item as bought:', error);
     return res.status(500).json({ success: false, message: 'Error marking item as bought.' });
   }
 
@@ -144,7 +137,6 @@ app.get('/getBoughtItems/:wishlistNumber', async (req, res) => {
     .eq('bought', true);
 
   if (error) {
-    console.error('Error fetching bought items:', error);
     return res.status(500).json({ success: false, message: 'Error fetching bought items' });
   }
 
@@ -154,3 +146,4 @@ app.get('/getBoughtItems/:wishlistNumber', async (req, res) => {
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
+
