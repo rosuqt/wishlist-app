@@ -325,17 +325,15 @@ okBtn.addEventListener('mouseleave', () => {
     okBtn.textContent = "Okay!";
 });
 
-window.addEventListener("load", function() {
-    const loader = document.getElementById("loader");
-  
-    if (!localStorage.getItem("firstLoadComplete")) {
-      localStorage.setItem("firstLoadComplete", "true");
-  
-      setTimeout(function() {
-        loader.classList.add("fade-out");
-      }, 2000); 
-    } else {
-      loader.classList.add("fade-out"); 
-    }
-  });
+window.addEventListener('load', function() {
+    const loader = document.getElementById('loader');
+
+    setTimeout(function() {
+        loader.classList.add('fade-out');
+        
+        loader.addEventListener('transitionend', function() {
+            loader.style.display = 'none';
+        });
+    }, 500); 
+});
   
