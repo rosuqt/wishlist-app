@@ -1,140 +1,3 @@
-.loader {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: white;
-    z-index: 9999;
-    opacity: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    animation: pulse-out 3s ease-in-out, fade-out 2.2s 3s forwards;  
-}
-
-
-@keyframes pulse-out {
-    0% {
-    opacity: 1;
-    transform: scale(1);
-    }
-    50% {
-    opacity: 0.8;
-    transform: scale(1.05); 
-    }
-    100% {
-    opacity: 1;
-    transform: scale(1);
-    }
-}
-
-@keyframes fade-out {
-    10% {
-    opacity: 1;
-    }
-    80% {
-    opacity: 1;
-    }
-    100% {
-    opacity: 0;
-    }
-}
-
-.loader.fade-out {
-    opacity: 0;
-    pointer-events: none; 
-}
-
-:root {
-    --pink-light: #ff7eb4;
-    --pink: #ff2581;
-}
-
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
-}
-
-.icon {
-    fill: transparent;
-    stroke: var(--pink);
-    stroke-width: 20;
-    cursor: pointer;
-    position: relative;
-}
-
-.icon svg {
-    overflow: visible;
-    width: 10rem;
-}
-
-.icon path {
-    stroke-dashoffset: 0;
-    stroke-dasharray: 1550;
-    transform-origin: center;
-}
-
-.icon .heart-background {
-    position: absolute;
-    left: 0;
-    right: 0;
-    z-index: -1;
-    stroke: none;
-}
-
-@keyframes stroke-animation {
-    0% {
-    stroke-dashoffset: 0;
-    }
-    30% {
-    stroke-dashoffset: 1550;
-    }
-    60% {
-    stroke-dashoffset: 3100;
-    fill: transparent;
-    transform: scale(1);
-    }
-    80% {
-    fill: var(--pink);
-    transform: scale(1.1);
-    }
-    90% {
-    transform: scale(1);
-    }
-    100% {
-    stroke-dashoffset: 3100;
-    fill: var(--pink);
-    }
-}
-
-@keyframes fade-animation {
-    70% {
-    fill: transparent;
-    transform: scale(1);
-    }
-    80% {
-    fill: var(--pink-light);
-    transform: scale(1.1);
-    opacity: 1;
-    }
-    90% {
-    opacity: 1;
-    }
-    100% {
-    transform: scale(2.5);
-    opacity: 0;
-    }
-}
-
-.loader.fade-out .icon .heart-main path {
-    animation: stroke-animation 1.3s ease-in-out forwards;
-}
-
-.loader.fade-out .icon .heart-background path {
-    animation: fade-animation 1.3s ease-in-out forwards;
-}
 body {
     font-family: 'Poppins', sans-serif;
     margin: 0;
@@ -343,34 +206,32 @@ nav button:hover::after {
     box-shadow: 0 6px 12px rgba(182, 135, 145, 0.863);
 }
 
-/* Keyframe for sliding the form from the bottom */
+
 @keyframes slideInFromBottom {
     from {
-        transform: translate(-50%, 100%); /* Start from the bottom */
-        opacity: 0; /* Start invisible */
+        transform: translate(-50%, 100%); 
+        opacity: 0; 
     }
     to {
-        transform: translate(-50%, -50%); /* End at the center */
-        opacity: 1; /* Fully visible */
+        transform: translate(-50%, -50%); 
+        opacity: 1; 
     }
 }
 
-/* Apply the animation to the #addItemForm when it is shown */
 #addItemForm {
     position: fixed;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%); /* Centered by default */
+    transform: translate(-50%, -50%); 
     background-color: #ffffff;
     padding: 20px;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
     display: none;
     width: 300px;
-    opacity: 0; /* Start invisible */
-    animation: slideInFromBottom 0.5s ease-out forwards; /* Slide-in animation */
+    opacity: 0; 
+    animation: slideInFromBottom 0.5s ease-out forwards; 
 }
 
-/* Other styling for the form */
 #addItemForm h2 {
     text-align: center;
     margin-bottom: 15px;
@@ -473,17 +334,17 @@ a {
 
 @keyframes slideInFromLeft {
     0% {
-        transform: translateX(-100%); /* Start off-screen to the left */
-        opacity: 0; /* Start as invisible */
+        transform: translateX(-100%); 
+        opacity: 0; 
     }
     100% {
-        transform: translateX(0); /* Slide to its original position */
-        opacity: 1; /* Become fully visible */
+        transform: translateX(0); 
+        opacity: 1; 
     }
 }
 
 h2 {
-    animation: slideInFromLeft 1s ease-out forwards; /* Apply the animation */
+    animation: slideInFromLeft 1s ease-out forwards; 
 }
 
 
@@ -514,7 +375,7 @@ h2.no-animation {
 }
 
 #responseBox {
-    display: none;  /* Hidden by default */
+    display: none;  
     position: fixed;
     top: 50%;
     left: 50%;
@@ -530,7 +391,7 @@ h2.no-animation {
 }
 
 #responseHeader {
-    background-color: #cc9999;  /* Green for success */
+    background-color: #cc9999;  
     color: white;
     padding: 10px;
     border-top-left-radius: 10px;
@@ -541,7 +402,7 @@ h2.no-animation {
 }
 
 #errorHeader {
-    background-color: #dc3545;  /* Red for error */
+    background-color: #dc3545; 
 }
 
 #closeBtn {

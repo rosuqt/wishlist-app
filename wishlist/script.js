@@ -325,16 +325,5 @@ okBtn.addEventListener('mouseleave', () => {
     okBtn.textContent = "Okay!";
 });
 
-window.addEventListener('load', function() {
-    const loader = document.getElementById('loader');
-
-    setTimeout(function() {
-        loader.classList.add('fade-out');
-
-        loader.addEventListener('animationend', function() {
-            loader.style.display = 'none';  
-        });
-    }, 500); 
-});
 
   
