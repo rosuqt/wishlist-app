@@ -221,14 +221,31 @@ function viewAlreadyBought(wishlistNumber) {
         .then(response => response.json())
         .then(data => {
             const container = document.getElementById("wishlistContainer");
-            container.innerHTML = ` <h2>Wishlist ${wishlistNumber} - Already Bought Items</h2> `;
+            
+            container.innerHTML = ''; 
+
+            const header = document.createElement('h2');
+            header.innerHTML = `
+                Wishlist ${wishlistNumber} 
+                <span class="already-bought-link" onclick="showWishlist(${wishlistNumber})">
+                    Back to Wishlist <<
+                </span>
+            `;
+            container.appendChild(header);
 
             if (data.items && data.items.length === 0) {
-                container.innerHTML += `
-    <img src="waiting.webp" alt="Loading..." class="loading-image" />
-    <p class="loading-text">Its Empty (◞‸ ◟)💧...</p>`;
+                const noItemsMessage = document.createElement('p');
+                noItemsMessage.className = 'loading-text';
+                noItemsMessage.innerHTML = 'Its Empty (◞‸ ◟)💧...';
+                container.appendChild(noItemsMessage);
 
+                const loadingImage = document.createElement('img');
+                loadingImage.src = 'waiting.webp';
+                loadingImage.alt = 'Loading...';
+                loadingImage.className = 'loading-image';
+                container.appendChild(loadingImage);
             } else {
+            
                 data.items.forEach(item => {
                     const itemElement = document.createElement("div");
                     itemElement.className = "wishlistItem";
@@ -251,6 +268,8 @@ function viewAlreadyBought(wishlistNumber) {
             alert('An error occurred while fetching bought items.');
         });
 }
+
+
 
 function closeAddItemForm() {
     document.getElementById("addItemForm").style.display = "none";
