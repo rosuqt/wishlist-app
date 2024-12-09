@@ -94,6 +94,16 @@ app.post('/deleteItem', async (req, res) => {
     return res.status(400).json({ success: false, message: "Missing wishlistNumber or id" });
   }
 
+  const { data, error: findError } = await supabase
+    .from('wishlist_items')
+    .select('id')
+    .eq('id', id)
+    .eq('wishlistNumber', wishlistNumber);
+
+  if (findError || data.length === 0) {
+    return res.status(404).json({ success: false, message: "Item not found" });
+  }
+
   const { error } = await supabase
     .from('wishlist_items')
     .delete()
@@ -106,6 +116,7 @@ app.post('/deleteItem', async (req, res) => {
 
   res.json({ success: true, message: 'Item deleted successfully' });
 });
+
 
 app.post('/markAsBought', async (req, res) => {
   const { wishlistNumber, id } = req.body;
