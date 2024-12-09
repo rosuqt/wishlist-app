@@ -332,10 +332,10 @@ window.addEventListener("load", function() {
       localStorage.setItem("firstLoadComplete", "true");
   
       setTimeout(function() {
-        loader.classList.add("hide");
-      }, 2000);
+        loader.classList.add("fade-out");
+      }, 2000); 
     } else {
-      loader.classList.add("hide");
+      loader.classList.add("fade-out"); 
     }
   });
   
