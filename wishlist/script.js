@@ -158,24 +158,23 @@ function editItem(wishlistNumber, itemIndex) {
 
 function deleteItem(wishlistNumber, itemIndex) {
     const item = wishlists[wishlistNumber][itemIndex];
-    if (!item) {
-        showResponseBox('error', "Item not found for deletion.");
+    console.log("Deleting item:", item);
+
+    if (!item || !item.id) {
+        showResponseBox('error', "Item not found or missing ID for deletion.");
         return;
     }
 
     fetch('/deleteItem', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ wishlistNumber, id: item.id }), 
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
             showResponseBox('success', data.message);
-            wishlists[wishlistNumber].splice(itemIndex, 1); 
-            showWishlist(wishlistNumber); 
+            fetchWishlistData(wishlistNumber);  // Refresh the wishlist
         } else {
             showResponseBox('error', data.message);
         }
@@ -188,24 +187,23 @@ function deleteItem(wishlistNumber, itemIndex) {
 
 function markAsBought(wishlistNumber, itemIndex) {
     const item = wishlists[wishlistNumber][itemIndex];
-    if (!item) {
-        showResponseBox('error', "Item not found for marking as bought.");
+    console.log("Marking as bought item:", item);
+
+    if (!item || !item.id) {
+        showResponseBox('error', "Item not found or missing ID for marking as bought.");
         return;
     }
 
     fetch('/markAsBought', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ wishlistNumber, id: item.id }), 
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
             showResponseBox('success', data.message);
-            item.bought = true; 
-            showWishlist(wishlistNumber); 
+            fetchWishlistData(wishlistNumber);  // Refresh the wishlist
         } else {
             showResponseBox('error', data.message);
         }
@@ -215,6 +213,8 @@ function markAsBought(wishlistNumber, itemIndex) {
         showResponseBox('error', "An error occurred while marking the item as bought.");
     });
 }
+
+
 
 function viewAlreadyBought(wishlistNumber) {
     fetch(`/getBoughtItems/${wishlistNumber}`)
