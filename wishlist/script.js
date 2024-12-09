@@ -318,12 +318,13 @@ function showResponseBox(status, message, data) {
 const okBtn = document.getElementById('okBtn');
 
 okBtn.addEventListener('mouseenter', () => {
-    okBtn.textContent = "(^▽^)👍";
+    okBtn.textContent = '(^▽^)👍';
 });
 
 okBtn.addEventListener('mouseleave', () => {
-    okBtn.textContent = "Okay!";
+    okBtn.textContent = 'OK';
 });
+
 
 
   
