@@ -226,7 +226,7 @@ function viewAlreadyBought(wishlistNumber) {
 
             const header = document.createElement('h2');
             header.innerHTML = `
-                Wishlist ${wishlistNumber} 
+                Wishlist ${wishlistNumber}  𖹭  Already Bought
                 <span class="already-bought-link" onclick="showWishlist(${wishlistNumber})">
                     Back to Wishlist <<
                 </span>
@@ -253,7 +253,7 @@ function viewAlreadyBought(wishlistNumber) {
                         <img src="${item.image}" alt="${item.name}">
                         <div>
                             <h3>${item.name}</h3>
-                            <p>Price: $${item.price}</p>
+                            <p>Price: PHP ${item.price}</p>
                             <p>Priority: ${item.priority || "None"}</p>
                             <p>Notes: ${item.notes || "No notes provided."}</p>
                             <a href="${item.link}" target="_blank">View Product</a>
