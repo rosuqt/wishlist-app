@@ -16,8 +16,6 @@ function resetText(button, originalText) {
     }, 200); 
 }
 
-
-
 const wishlists = {
     1: [],
     2: []
@@ -64,8 +62,6 @@ function showWishlist(wishlistNumber) {
             `;
             container.appendChild(itemElement);
         });
-        
-        
     }
 
     const addButton = document.createElement("button");
@@ -75,7 +71,7 @@ function showWishlist(wishlistNumber) {
 }
 
 function fetchWishlistData(wishlistNumber) {
-    fetch(`http://localhost:3000/getWishlistItems/${wishlistNumber}`)
+    fetch(`/getWishlistItems/${wishlistNumber}`)
         .then(response => response.json())
         .then(data => {
             if (data.success) {
@@ -105,7 +101,6 @@ function addOrUpdateItem(event) {
         updateIndex: document.getElementById("updateIndex").value || null 
     };
 
-    
     console.log("Product Data being sent:", productData);
     
     fetch('/addItem', {
@@ -128,11 +123,7 @@ function addOrUpdateItem(event) {
         console.error('Error:', error);
         showResponseBox('An error occurred while processing the request.', 'error');
     });
-    
 }
-
-
-
 
 function openAddItemForm(wishlistNumber) {
     const form = document.getElementById("addItemForm");
@@ -147,7 +138,6 @@ function openAddItemForm(wishlistNumber) {
     document.getElementById("productPriority").value = "";
 }
 
-
 function editItem(wishlistNumber, itemIndex) {
     const item = wishlists[wishlistNumber][itemIndex];
     openAddItemForm(wishlistNumber);
@@ -161,15 +151,12 @@ function editItem(wishlistNumber, itemIndex) {
     document.getElementById("updateIndex").value = item.id; 
 }
 
-
-
-
 function deleteItem(wishlistNumber, itemIndex) {
     const item = wishlists[wishlistNumber][itemIndex];
     console.log('Deleting item:', item); 
     console.log('Wishlist number:', wishlistNumber); 
 
-    fetch('http://localhost:3000/deleteItem', {
+    fetch('/deleteItem', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -191,11 +178,10 @@ function deleteItem(wishlistNumber, itemIndex) {
     });
 }
 
-
 function markAsBought(wishlistNumber, itemIndex) {
     const item = wishlists[wishlistNumber][itemIndex]; 
 
-    fetch('http://localhost:3000/markAsBought', {
+    fetch('/markAsBought', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -217,9 +203,8 @@ function markAsBought(wishlistNumber, itemIndex) {
     });
 }
 
-
 function viewAlreadyBought(wishlistNumber) {
-    fetch(`http://localhost:3000/getBoughtItems/${wishlistNumber}`)
+    fetch(`/getBoughtItems/${wishlistNumber}`)
         .then(response => response.json())
         .then(data => {
             const container = document.getElementById("wishlistContainer");
@@ -269,8 +254,6 @@ window.onload = function() {
         document.getElementById("wishlistContainer").innerHTML = `
     <img src="waiting.webp" alt="Loading..." class="loading-image" />
     <p class="loading-text">Its Empty (◞‸ ◟)💧...</p>`;
-        
-
     }
 };
 
@@ -319,25 +302,12 @@ function showResponseBox(status, message, data) {
     });
 }
 
-
 const okBtn = document.getElementById('okBtn');
 
 okBtn.addEventListener('mouseenter', () => {
-    okBtn.textContent = '(^▽^)👍';
+    okBtn.textContent = "Okay!";
 });
 
 okBtn.addEventListener('mouseleave', () => {
-    okBtn.textContent = 'OK';
-});
-
-window.addEventListener('load', function() {
-    const loader = document.getElementById('loader');
-
-    setTimeout(function() {
-        loader.classList.add('fade-out');
-        
-        loader.addEventListener('transitionend', function() {
-            loader.style.display = 'none';
-        });
-    }, 500); 
+    okBtn.textContent = "Okay";
 });
