@@ -25,7 +25,9 @@ app.get('/wish.html', (req, res) => {
 });
 
 app.post('/addItem', async (req, res) => {
-  const { name, link, price, image, notes, priority, wishlistNumber, updateIndex } = req.body;
+  const { name, link, price, image, notes, priority, wishlistNumber, updateIndex, brand } = req.body;
+
+  console.log('Received data:', { name, link, price, image, notes, priority, wishlistNumber, updateIndex, brand }); 
 
   if (!name || !link || !price || !wishlistNumber) {
     return res.status(400).json({ success: false, message: "Missing required fields." });
@@ -49,7 +51,7 @@ app.post('/addItem', async (req, res) => {
 
     const { error: updateError } = await supabase
       .from('wishlist_items')
-      .update({ name, link, price: priceNum, image, notes, priority })
+      .update({ name, link, price: priceNum, image, notes, priority, brand })
       .eq('id', updateIndex)
       .eq('wishlistNumber', wishlistNumber);
 
@@ -61,7 +63,7 @@ app.post('/addItem', async (req, res) => {
   } else {
     const { error } = await supabase
       .from('wishlist_items')
-      .insert([{ name, link, price: priceNum, image, notes, priority, wishlistNumber }]);
+      .insert([{ name, link, price: priceNum, image, notes, priority, wishlistNumber, brand }]);
 
     if (error) {
       return res.status(500).json({ success: false, message: 'Error adding item.' });
@@ -70,6 +72,7 @@ app.post('/addItem', async (req, res) => {
     res.json({ success: true, message: 'Item added successfully.' });
   }
 });
+
 
 app.get('/getWishlistItems/:wishlistNumber', async (req, res) => {
   const wishlistNumber = req.params.wishlistNumber;

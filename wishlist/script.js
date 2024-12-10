@@ -47,6 +47,7 @@ function showWishlist(wishlistNumber) {
                 <img src="${item.image}" alt="${item.name}">
                 <div>
                     <h3><span>${item.name}</span></h3>
+                    <p>Brand: ${item.brand || "No brand specified"}</p>
                     <p><span>Price: PHP ${item.price}</span></p>
                     <p><span>Priority: ${item.priority || "None"}</span></p>
                     <p><span>Notes: ${item.notes || "No notes provided."}</span></p>
@@ -97,6 +98,7 @@ function addOrUpdateItem(event) {
         image: document.getElementById("productImage").value,
         notes: document.getElementById("productNotes").value,
         priority: document.getElementById("productPriority").value,
+        brand: document.getElementById("productBrand").value,
         wishlistNumber: parseInt(document.getElementById("wishlistNumber").value), 
         updateIndex: document.getElementById("updateIndex").value || null 
     };
@@ -136,6 +138,9 @@ function openAddItemForm(wishlistNumber) {
     document.getElementById("productImage").value = "";
     document.getElementById("productNotes").value = "";
     document.getElementById("productPriority").value = "";
+    document.getElementById("productBrand").value = "";
+    
+    
 }
 
 function editItem(wishlistNumber, itemIndex) {
@@ -148,6 +153,7 @@ function editItem(wishlistNumber, itemIndex) {
     openAddItemForm(wishlistNumber);
 
     document.getElementById("productName").value = item.name;
+    document.getElementById("productBrand").value = item.brand || "Unknown";
     document.getElementById("productLink").value = item.link;
     document.getElementById("productPrice").value = item.price;
     document.getElementById("productImage").value = item.image;
@@ -251,6 +257,7 @@ function viewAlreadyBought(wishlistNumber) {
                         <img src="${item.image}" alt="${item.name}">
                         <div>
                             <h3>${item.name}</h3>
+                            <p>Brand: ${item.brand || "No brand specified"}</p>
                             <p>Price: PHP ${item.price}</p>
                             <p>Priority: ${item.priority || "None"}</p>
                             <p>Notes: ${item.notes || "No notes provided."}</p>
